@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+        postgres:
+                image: postgres:13
+                container_name: freight_postgres
+                env_file: 
+                        - ./.env
+                volumes:
+                        - db_data:/var/lib/postgresql/data
+                ports:
+                        - "5432:5432"
+        backend:
+                build: ./backend
+                container_name: freight_backend
+                command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+                env_file:
+                        - ./.env
+                volumes:
+                        - ./backend:/backend/
+                depends_on:
+                        - postgres
+                ports:
+                        - "8000:8000"
+volumes:
+        db_data:
+
